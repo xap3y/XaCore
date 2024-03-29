@@ -1,0 +1,49 @@
+# MSG file
+test: "&8Loaded"
+
+chatFormat: "&6<player> &7>> &r<message>"
+
+
+messages:
+
+  wrongUsage: "<prefix> &cWrong usage! &7<usage>"
+  noPermission: "<prefix> &cYou don't have permission to do that!"
+
+  onlyPlayers: "<prefix> &cOnly players can use this command!"
+
+  gamemodeChanged: "<prefix> &fGamemode changed to &6<gamemode>"
+  gamemodeChangedOther: "<prefix> &fGamemode changed for &e<player> &fto &6<gamemode>"
+
+  joinMessage: "&6<player> &fjoined the game"
+  quitMessage: "&6<player> &fleft the game"
+
+  reloadMessage: "<prefix> &fReloaded"
+
+  helpMessage: "<prefix> &fTo view command list, type: &e/xc help"
+
+  flyToggle: "<prefix> &fFly mode &r<status>"
+
+  sunMessage: "<prefix> &fWeather set to &6sunny"
+  rainMessage: "<prefix> &fWeather set to &6rain"
+  thunderMessage: "<prefix> &fWeather set to &6thunder"
+
+  dayMessage: "<prefix> &fSet time to &6day"
+  nightMessage: "<prefix> &fSet time to &6night"
+
+  healSelf: "<prefix> &fYou have been healed"
+  healOther: "<prefix> &fYou have healed player &e<player>"
+
+
+menus:
+  helpMenu:
+    - "&a&m-+-------------------&r&7[&c&lXaCore&7]&a&m-------------------+-"
+    - "&3/xc help &f- &6Shows this help message"
+    - "&3/xc about &f- &6Shows information about the plugin"
+    - "&a&m-+-----------------------------------------------+-"
+
+  aboutMenu:
+    - "&a&m-+-------------------&r&7[&c&lXaCore&7]&a&m-------------------+-"
+    - "&3Version: &f<version>"
+    - "&3Author: &f<author>"
+    - "&3Debug: &f<debug>"
+    - "&a&m-+-----------------------------------------------+-"

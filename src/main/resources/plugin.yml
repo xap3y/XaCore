@@ -1,0 +1,13 @@
+name: XaCore
+version: '${project.version}'
+main: me.xap3y.xacore.Main
+api-version: '1.20'
+author: xap3y
+
+permissions:
+    xacore.admin:
+        description: Allows access to all XaCore commands
+        default: op
+    xacore.reload:
+        description: Allows access to the /xa reload command
+        default: op
