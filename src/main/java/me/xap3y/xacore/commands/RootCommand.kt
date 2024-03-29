@@ -4,7 +4,6 @@ package me.xap3y.xacore.commands
 
 import me.xap3y.xacore.Main
 import org.bukkit.command.CommandSender
-import org.bukkit.entity.Player
 import org.incendo.cloud.annotations.Command
 import org.incendo.cloud.annotations.CommandDescription
 import org.incendo.cloud.annotations.Permission
