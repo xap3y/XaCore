@@ -10,7 +10,7 @@ class PlayerJoinListener(private val plugin: Main): Listener {
 
     @EventHandler
     fun onPlayerJoinEvent(e: PlayerJoinEvent) {
-        val isEnabled = plugin.config.getBoolean("messages.joinMessage")
+        val isEnabled = plugin.config.getBoolean("joinMessage")
         if (!isEnabled) return
 
         val message = plugin.configManager.getMessage("messages.joinMessage", "&6<player> &fjoined the game")
