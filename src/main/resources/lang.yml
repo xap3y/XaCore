@@ -33,6 +33,22 @@ messages:
   healSelf: "<prefix> &fYou have been healed"
   healOther: "<prefix> &fYou have healed player &e<player>"
 
+  feedSelf: "<prefix> &fYou have been fed"
+  feedOther: "<prefix> &fYou have fed player &e<player>"
+
+  speedMessage: "<prefix> &fSet speed to &6<speed>"
+  speedRange: "<prefix> &cSpeed must be between 0 and 10"
+
+  setHome: "<prefix> &fHome set"
+  setCustomHome: "<prefix> &fHome &e<home> &fset"
+  homeTeleport: "<prefix> &fTeleported to home"
+  customHomeTeleport: "<prefix> &fTeleported to home &e<home>"
+  noHome: "<prefix> &cYou don't have a home set"
+  noCustomHome: "<prefix> &cYou don't have a home named &e<home> &cset"
+
+  setSpawn: "<prefix> &fSpawn set"
+  noSpawn: "<prefix> &cSpawn not set"
+  spawn: "<prefix> &fTeleported to spawn"
 
 menus:
   helpMenu:
@@ -47,3 +63,15 @@ menus:
     - "&3Author: &f<author>"
     - "&3Debug: &f<debug>"
     - "&a&m-+-----------------------------------------------+-"
+
+commands:
+  blacklist:
+    - "plugin"
+    - "pl"
+    - "me"
+    - "bukkit:*"
+    - "minecraft:*"
+    - "version"
+    - "ver"
+    - "?"
+    - "about"

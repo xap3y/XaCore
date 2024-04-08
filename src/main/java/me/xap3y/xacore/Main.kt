@@ -7,6 +7,7 @@ import me.xap3y.xacore.commands.Gamemodes
 import me.xap3y.xacore.commands.RootCommand
 import me.xap3y.xacore.commands.WeatherCommands
 import me.xap3y.xacore.listeners.PlayerChatListener
+import me.xap3y.xacore.listeners.PlayerCommandPreprocessListener
 import me.xap3y.xacore.listeners.PlayerJoinListener
 import me.xap3y.xacore.listeners.PlayerQuitListener
 import org.bukkit.command.CommandSender
@@ -26,6 +27,7 @@ class Main : JavaPlugin() {
     lateinit var messageFile: File
 
     val textApi: Texter by lazy { Texter(this) }
+    val helper: Helper by lazy { Helper(this) }
 
     override fun onEnable() {
 
@@ -60,7 +62,8 @@ class Main : JavaPlugin() {
         val list: Set<Listener> = setOf(
             PlayerJoinListener(this),
             PlayerQuitListener(this),
-            PlayerChatListener(this)
+            PlayerChatListener(this),
+            PlayerCommandPreprocessListener(this)
         )
 
         val pm: PluginManager = server.pluginManager

@@ -3,6 +3,7 @@
 package me.xap3y.xacore.commands
 
 import me.xap3y.xacore.Main
+import org.bukkit.Location
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.incendo.cloud.annotations.Argument
@@ -19,8 +20,7 @@ class AdminCommands(private val plugin: Main) {
             return plugin.textApi.commandReply(
                 commandSender,
                 "messages.onlyPlayers",
-                wPrefix = true,
-                default = "<prefix> &cOnly players can use this command!"
+                wPrefix = true
             )
 
         commandSender.allowFlight = !commandSender.allowFlight
@@ -31,6 +31,43 @@ class AdminCommands(private val plugin: Main) {
             hashMapOf("status" to if (commandSender.allowFlight) "&aenabled" else "&cdisabled"),
             true,
             "<prefix> &fFly mode &r<status>&f!"
+        )
+    }
+
+    @Command("speed <speed>")
+    @CommandDescription("Change your speed")
+    @Permission(value = ["xacore.speed", "xacore.*"], mode = Permission.Mode.ANY_OF)
+    fun onSpeedCommand(
+        commandSender: CommandSender,
+        @Argument("speed") speed: Int,
+    ) {
+        if (commandSender !is Player)
+            return plugin.textApi.commandReply(
+                commandSender,
+                "messages.onlyPlayers",
+                wPrefix = true
+            )
+
+        if (speed < 1 || speed > 10)
+            return plugin.textApi.commandReply(
+                commandSender,
+                "messages.speedRange",
+                hashMapOf("speed" to speed.toString()),
+                true,
+                "<prefix> &cSpeed must be between 1 and 10!"
+            )
+
+        if (commandSender.isFlying)
+            commandSender.flySpeed = speed / 20f
+        else
+            commandSender.walkSpeed = speed / 20f
+
+        plugin.textApi.commandReply(
+            commandSender,
+            "messages.speedMessage",
+            hashMapOf("speed" to speed.toString()),
+            true,
+            "<prefix> &fYour speed has been set to &e<speed>&f!"
         )
     }
 
@@ -46,8 +83,7 @@ class AdminCommands(private val plugin: Main) {
                 commandSender,
                 "messages.wrongUsage",
                 hashMapOf("usage" to "/xc heal <player>"),
-                true,
-                "<prefix> &cWrong usage! &7<usage>"
+                true
             )
 
         val target = player ?: commandSender as Player
@@ -74,6 +110,100 @@ class AdminCommands(private val plugin: Main) {
         }
     }
 
+    @Command("feed [player]")
+    @CommandDescription("Feed yourself or another player")
+    @Permission(value = ["xacore.feed", "xacore.*"], mode = Permission.Mode.ANY_OF)
+    fun onFeedCommand(
+        commandSender: CommandSender,
+        @Argument("player") player: Player? = null,
+    ) {
+        if (commandSender !is Player && player == null)
+            return plugin.textApi.commandReply(
+                commandSender,
+                "messages.wrongUsage",
+                hashMapOf("usage" to "/xc feed <player>"),
+                true
+            )
+
+        val target = player ?: commandSender as Player
+
+        target.foodLevel = 20
+
+        if (player == null || (commandSender is Player && commandSender.uniqueId.toString() == target.uniqueId.toString())) {
+            plugin.textApi.commandReply(
+                commandSender,
+                "messages.feedSelf",
+                hashMapOf("player" to target.name),
+                true,
+                "<prefix> &fYou have fed yourself!"
+            )
+        } else {
+            plugin.textApi.commandReply(
+                commandSender,
+                "messages.feedOther",
+                hashMapOf("player" to target.name),
+                true,
+                "<prefix> &fYou have fed &e<player>&f!"
+            )
+        }
+    }
+
+    @Command("setspawn")
+    @CommandDescription("Set the spawn location")
+    @Permission(value = ["xacore.setspawn", "xacore.*"], mode = Permission.Mode.ANY_OF)
+    fun onSetSpawnCommand(commandSender: CommandSender) {
+        if (commandSender !is Player)
+            return plugin.textApi.commandReply(
+                commandSender,
+                "messages.onlyPlayers",
+                wPrefix = true
+            )
+
+        plugin.config.set("spawn.world", commandSender.world.name)
+        plugin.config.set("spawn.x", commandSender.location.x)
+        plugin.config.set("spawn.y", commandSender.location.y)
+        plugin.config.set("spawn.z", commandSender.location.z)
+        plugin.config.set("spawn.yaw", commandSender.location.yaw)
+        plugin.config.set("spawn.pitch", commandSender.location.pitch)
+
+        plugin.textApi.commandReply(
+            commandSender,
+            "messages.setSpawn",
+            wPrefix = true,
+            default = "<prefix> &fSpawn set!"
+        )
+    }
+
+    @Command("spawn")
+    @CommandDescription("Teleport to the spawn location")
+    //@Permission(value = ["xacore.spawn", "xacore.*"], mode = Permission.Mode.ANY_OF)
+    fun onSpawnCommand(commandSender: CommandSender) {
+        if (commandSender !is Player)
+            return plugin.textApi.commandReply(
+                commandSender,
+                "messages.onlyPlayers",
+                wPrefix = true
+            )
+
+        val spawnLocation = plugin.helper.getSpawnLocation() ?: return plugin.textApi.commandReply(
+            commandSender,
+            "messages.noSpawn",
+            wPrefix = true,
+            default = "<prefix> &cSpawn not set"
+        )
+
+        // Sync
+        plugin.server.scheduler.runTask(plugin, Runnable {
+            commandSender.teleport(spawnLocation)
+        })
+
+        plugin.textApi.commandReply(
+            commandSender,
+            "messages.spawn",
+            wPrefix = true,
+            default = "<prefix> &fTeleported to spawn!"
+        )
+    }
 
 
 }

@@ -122,12 +122,10 @@ class Gamemodes(private val plugin: Main) {
         val gamemodeName = gamemode.name.lowercase()
 
         if (!commandSender.hasPermission("xacore.gamemode.$gamemodeName") && !commandSender.hasPermission("xacore.gamemode.*") && !commandSender.hasPermission("xacore.*"))
-            return plugin.textApi.commandReply(
+
+            return plugin.helper.noPermMessage(
                 commandSender,
-                "messages.noPermission",
-                hashMapOf("permission" to "xacore.gamemode.$gamemodeName"),
-                true,
-                "<prefix> &cNo permission!"
+                hashMapOf("permission" to "xacore.gamemode.$gamemodeName")
             )
 
         if (commandSender is Player && commandSender.uniqueId.toString() == target.uniqueId.toString())

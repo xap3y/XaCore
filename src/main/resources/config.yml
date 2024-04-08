@@ -6,3 +6,7 @@ joinMessage: true
 quitMessage: true
 
 chatFormat: true
+
+spawnOnJoin: true
+
+commandBlackList: true
