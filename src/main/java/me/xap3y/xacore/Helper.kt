@@ -29,4 +29,23 @@ class Helper(private val plugin: Main) {
         )
     }
 
+    fun onlyPlayersMessage(commandSender: CommandSender, wPrefix: Boolean = true) {
+        return plugin.textApi.commandReply(
+            commandSender,
+            "messages.onlyPlayers",
+            wPrefix = true,
+            default = "<prefix> &cOnly players can use this command!"
+        )
+    }
+
+    fun wrongUsageMessage(commandSender: CommandSender, usage: String, wPrefix: Boolean = true) {
+        return plugin.textApi.commandReply(
+            commandSender,
+            "messages.wrongUsage",
+            hashMapOf("usage" to usage),
+            wPrefix,
+            "<prefix> &cWrong usage! &7<usage>"
+        )
+    }
+
 }

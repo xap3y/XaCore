@@ -2,10 +2,7 @@ package me.xap3y.xacore
 
 import me.xap3y.xacore.api.config.ConfigManager
 import me.xap3y.xacore.api.text.Texter
-import me.xap3y.xacore.commands.AdminCommands
-import me.xap3y.xacore.commands.Gamemodes
-import me.xap3y.xacore.commands.RootCommand
-import me.xap3y.xacore.commands.WeatherCommands
+import me.xap3y.xacore.commands.*
 import me.xap3y.xacore.listeners.PlayerChatListener
 import me.xap3y.xacore.listeners.PlayerCommandPreprocessListener
 import me.xap3y.xacore.listeners.PlayerJoinListener
@@ -49,6 +46,7 @@ class Main : JavaPlugin() {
         annotationParser.parse(Gamemodes(this))
         annotationParser.parse(WeatherCommands(this))
         annotationParser.parse(AdminCommands(this))
+        annotationParser.parse(UtilityCommands(this))
 
         regiserListeners()
 

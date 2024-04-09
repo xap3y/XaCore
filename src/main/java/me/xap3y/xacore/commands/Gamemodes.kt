@@ -24,22 +24,11 @@ class Gamemodes(private val plugin: Main) {
     ) {
         if (gamemode == null)
 
-            return plugin.textApi.commandReply(
-                commandSender,
-                "messages.wrongUsage",
-                hashMapOf("usage" to "/xc gm <gamemode> [player]"),
-                true,
-                "<prefix> &cWrong usage! &7<usage>"
-            )
+            return plugin.helper.wrongUsageMessage(commandSender, "/xc gm <gamemode> [player]")
 
         else if (player == null && commandSender !is Player)
-            return plugin.textApi.commandReply(
-                commandSender,
-                "messages.wrongUsage",
-                hashMapOf("usage" to "/xc gm <gamemode> <player>"),
-                true,
-                "<prefix> &cWrong usage! &7<usage>"
-            )
+
+            return plugin.helper.wrongUsageMessage(commandSender, "/xc gm <gamemode> <player>")
 
         val target = player ?: commandSender as Player
         changeGamemode(target, gamemode, commandSender)
@@ -50,13 +39,7 @@ class Gamemodes(private val plugin: Main) {
     @Permission(value = ["xacore.gamemode.creative", "xacore.gamemode.*", "xacore.*"], mode = Permission.Mode.ANY_OF)
     fun onGamemodeCreative(commandSender: CommandSender, @Argument("player") player: Player? = null) {
         if (commandSender !is Player && player == null)
-            return plugin.textApi.commandReply(
-                commandSender,
-                "messages.wrongUsage",
-                hashMapOf("usage" to "/gmc <player>"),
-                true,
-                "<prefix> &cWrong usage! &7<usage>"
-            )
+            return plugin.helper.wrongUsageMessage(commandSender, "/gmc <player>")
 
         val target = player ?: commandSender as Player
 
@@ -68,13 +51,7 @@ class Gamemodes(private val plugin: Main) {
     @Permission(value = ["xacore.gamemode.adventure", "xacore.gamemode.*", "xacore.*"], mode = Permission.Mode.ANY_OF)
     fun onGamemodeAdventure(commandSender: CommandSender, @Argument("player") player: Player? = null) {
         if (commandSender !is Player && player == null)
-            return plugin.textApi.commandReply(
-                commandSender,
-                "messages.wrongUsage",
-                hashMapOf("usage" to "/gma <player>"),
-                true,
-                "<prefix> &cWrong usage! &7<usage>"
-            )
+            return plugin.helper.wrongUsageMessage(commandSender, "/gma <player>")
 
         val target = player ?: commandSender as Player
 
@@ -86,14 +63,7 @@ class Gamemodes(private val plugin: Main) {
     @Permission(value = ["xacore.gamemode.spectator", "xacore.gamemode.*", "xacore.*"], mode = Permission.Mode.ANY_OF)
     fun onGamemodeSpectator(commandSender: CommandSender, @Argument("player") player: Player? = null) {
         if (commandSender !is Player && player == null)
-            return plugin.textApi.commandReply(
-                commandSender,
-                "messages.wrongUsage",
-                hashMapOf("usage" to "/gmsp <player>"),
-                true,
-                "<prefix> &cWrong usage! &7<usage>"
-            )
-
+            return return plugin.helper.wrongUsageMessage(commandSender, "/gmsp <player>")
         val target = player ?: commandSender as Player
 
         changeGamemode(target, GameMode.SPECTATOR, commandSender)
@@ -104,13 +74,7 @@ class Gamemodes(private val plugin: Main) {
     @Permission(value = ["xacore.gamemode.survival", "xacore.gamemode.*", "xacore.*"], mode = Permission.Mode.ANY_OF)
     fun onGamemodeSurvival(commandSender: CommandSender, @Argument("player") player: Player? = null) {
         if (commandSender !is Player && player == null)
-            return plugin.textApi.commandReply(
-                commandSender,
-                "messages.wrongUsage",
-                hashMapOf("usage" to "/gms <player>"),
-                true,
-                "<prefix> &cWrong usage! &7<usage>"
-            )
+            return return plugin.helper.wrongUsageMessage(commandSender, "/gms <player>")
 
         val target = player ?: commandSender as Player
 
@@ -131,7 +95,7 @@ class Gamemodes(private val plugin: Main) {
         if (commandSender is Player && commandSender.uniqueId.toString() == target.uniqueId.toString())
             plugin.textApi.commandReply(
                 commandSender,
-                "messages..gamemodeChanged",
+                "messages.gamemodeChanged",
                 hashMapOf("gamemode" to gamemodeName),
                 true,
                 "<prefix> &fGamemode changed to &6<gamemode>"
@@ -139,7 +103,7 @@ class Gamemodes(private val plugin: Main) {
         else
             plugin.textApi.commandReply(
                 commandSender,
-                "messages..gamemodeChangedOther",
+                "messages.gamemodeChangedOther",
                 hashMapOf("player" to target.displayName, "gamemode" to gamemodeName),
                 true,
                 "<prefix> &fGamemode changed for &e<player> &fto &6<gamemode>"

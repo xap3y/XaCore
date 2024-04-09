@@ -50,6 +50,9 @@ messages:
   noSpawn: "<prefix> &cSpawn not set"
   spawn: "<prefix> &fTeleported to spawn"
 
+  ping: "<prefix> &fYour ping is &6<ping>ms"
+  pingOther: "<prefix> &fPing of player &e<player> &fis &6<ping>ms"
+
 menus:
   helpMenu:
     - "&a&m-+-------------------&r&7[&c&lXaCore&7]&a&m-------------------+-"
