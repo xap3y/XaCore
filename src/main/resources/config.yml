@@ -2,16 +2,17 @@
 prefix: "&7[&6XaCore&7]"
 debug: false
 
-hookVault: true
+hookVault: false
+hookPlaceholderAPI: false
 
 joinMessage: true
 quitMessage: true
 
 chatFormat: true
 
-spawnOnJoin: true
+spawnOnJoin: false
 
-commandBlackList: true
+commandBlackList: false
 
 gamemodeOnJoinToggle: false
 gamemodeOnJoin: "creative"

@@ -22,7 +22,7 @@ class PlayerChatListener(private val plugin: Main): Listener {
         val isEnabled = plugin.config.getBoolean("chatFormat")
         if (!isEnabled) return
 
-        val message = plugin.configManager.getMessage("chatFormat", "&6<player> &7>> &r<message>")
+        val message = plugin.configManager.getMessage("chatFormat", "&6<player> &7>> &r<message>", e.player)
 
         e.format = plugin.textApi.coloredMessage(
             plugin.textApi.replace(

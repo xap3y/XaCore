@@ -15,7 +15,7 @@ class PlayerJoinListener(private val plugin: Main): Listener {
         // Custom join message
         val joinMessageEnabled = plugin.config.getBoolean("joinMessage")
         if (joinMessageEnabled) {
-            val message = plugin.configManager.getMessage("messages.joinMessage", "&6<player> &fjoined the game")
+            val message = plugin.configManager.getMessage("messages.joinMessage", "&6<player> &fjoined the game", e.player)
 
             e.joinMessage = plugin.textApi.coloredMessage(
                 plugin.textApi.replace(

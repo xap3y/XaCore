@@ -273,7 +273,7 @@ class AdminCommands(private val plugin: Main) {
         val isFlying = player.isFlying
         val ip = player.address.hostString
 
-        val list = plugin.configManager.getList("menus.whois") ?: return // TODO
+        val list = plugin.configManager.getList("menus.whois", player) ?: return // TODO
 
         list.forEach {
             commandSender.sendMessage(
@@ -297,6 +297,22 @@ class AdminCommands(private val plugin: Main) {
                 )
             )
         }
+    }
+
+    @Command("invsee <player>")
+    @CommandDescription("View the inventory of another player")
+    @Permission(value = ["xacore.invsee", "xacore.*"], mode = Permission.Mode.ANY_OF)
+    fun onInvseeCommand(
+        commandSender: CommandSender,
+        @Argument("player") player: Player,
+    ) {
+        if (commandSender !is Player)
+            return plugin.helper.onlyPlayersMessage(commandSender)
+
+        plugin.server.scheduler.runTask(plugin, Runnable {
+            commandSender.openInventory(player.inventory)
+        })
+
     }
 
 

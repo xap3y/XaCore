@@ -61,6 +61,12 @@ messages:
 
   chatDeny: "<prefix> &cChat is currently locked"
 
+  whisperSelf: "<prefix> &cYou can't whisper to yourself"
+  whisperNobody: "<prefix> &cnobody to whisper to"
+  whisperOffline: "<prefix> &cPlayer &e<player> &cwent offline"
+  whisperFormatFrom: "&7From &6<player> &7>> &r<message>"
+  whisperFormatTo: "&7To &6<player> &7>> &r<message>"
+
 menus:
   helpMenu:
     - "&a&m-+-------------------&r&7[&c&lXaCore&7]&a&m-------------------+-"
@@ -97,3 +103,7 @@ commands:
     - "ver"
     - "?"
     - "about"
+
+placeholders:
+  true: "&aYes"
+  false: "&cNo"

@@ -1,8 +1,10 @@
 package me.xap3y.xacore.api.config
 
+import me.clip.placeholderapi.PlaceholderAPI
 import me.xap3y.xacore.Main
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.configuration.file.YamlConfiguration
+import org.bukkit.entity.Player
 
 class ConfigManager(private val plugin: Main) {
 
@@ -24,19 +26,30 @@ class ConfigManager(private val plugin: Main) {
         langYML = YamlConfiguration.loadConfiguration(plugin.messageFile)
     }
 
-    fun getMessage(value: String, default: String): String {
-        val key = langYML?.getString(value) ?: default
+    fun getMessage(value: String, default: String, player: Player? = null): String {
+        var key = langYML?.getString(value) ?: default
         val prefix = plugin.config.getString("prefix")
 
-        return key.replace("<prefix>", prefix ?: "")
+        key = key.replace("<prefix>", prefix ?: "")
+        if (plugin.usePapi && player !== null) {
+            plugin.textApi.console("Converting..")
+            key = PlaceholderAPI.setPlaceholders(player, key)
+        }
+
+        return key.replace("%", "%%")
     }
 
-    fun getList(value: String): MutableList<*>? {
+    fun getList(value: String, player: Player? = null): MutableList<*>? {
         val list = langYML?.getList(value)?.toMutableList()
+        if (list === null) return null
         val prefix = plugin.config.getString("prefix")
-        list?.replaceAll { it?.toString()?.replace("<prefix>", prefix ?: "") }
-        //list?.let { plugin.textApi.console(it.joinToString(", ")) }
-        return list
+        list.replaceAll { it?.toString()?.replace("<prefix>", prefix ?: "") }
+
+        if (plugin.usePapi && player !== null)
+            list.replaceAll { PlaceholderAPI.setPlaceholders(player, it.toString()) }
+
+        return list.map { it.toString().replace("%", "%%") }.toMutableList()
+
     }
 
 }

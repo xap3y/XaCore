@@ -1,5 +1,6 @@
-package me.xap3y.xacore
+package me.xap3y.xacore.utils
 
+import me.xap3y.xacore.Main
 import org.bukkit.Location
 import org.bukkit.command.CommandSender
 
@@ -48,4 +49,19 @@ class Helper(private val plugin: Main) {
         )
     }
 
+    fun getWhisperFormats(): Pair<String, String> {
+        val formatFrom = plugin.configManager.getMessage(
+            "messages.whisperFormatFrom",
+            "&7From &6<player> &7>> &r<message>",
+            null
+        )
+
+        val formatTo = plugin.configManager.getMessage(
+            "messages.whisperFormatTo",
+            "&7To &6<player> &7>> &r<message>",
+            null
+        )
+
+        return Pair(formatFrom, formatTo)
+    }
 }

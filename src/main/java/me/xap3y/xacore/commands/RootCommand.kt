@@ -4,6 +4,7 @@ package me.xap3y.xacore.commands
 
 import me.xap3y.xacore.Main
 import org.bukkit.command.CommandSender
+import org.bukkit.entity.Player
 import org.incendo.cloud.annotations.Command
 import org.incendo.cloud.annotations.CommandDescription
 import org.incendo.cloud.annotations.Permission
@@ -31,7 +32,7 @@ class RootCommand(private val plugin: Main) {
     @CommandDescription("Shows the plugin help")
     fun onHelpCommand(commandSender: CommandSender) {
 
-        val menu = plugin.configManager.getList("menus.helpMenu") ?:
+        val menu = plugin.configManager.getList("menus.helpMenu", if (commandSender is Player) commandSender else null) ?:
             return commandSender.sendMessage(plugin.textApi.replace(plugin.textApi.coloredMessage("<prefix> &cNo help message found!"), hashMapOf(), true))
 
 
@@ -45,7 +46,7 @@ class RootCommand(private val plugin: Main) {
     @CommandDescription("Shows the about menu")
     fun onAboutCommand(commandSender: CommandSender) {
 
-        val menu = plugin.configManager.getList("menus.aboutMenu") ?:
+        val menu = plugin.configManager.getList("menus.aboutMenu", if (commandSender is Player) commandSender else null) ?:
             return commandSender.sendMessage(plugin.textApi.replace(plugin.textApi.coloredMessage("<prefix> &cNo help message found!"), hashMapOf(), true))
 
         menu.forEach {

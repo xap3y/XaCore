@@ -16,7 +16,7 @@ class PlayerCommandPreprocessListener(private val plugin: Main): Listener {
         // Get command without the slash
         val command = e.message.split(" ")[0].substring(1)
 
-        val blackList = plugin.configManager.getList("commands.blacklist") ?: return
+        val blackList = plugin.configManager.getList("commands.blacklist", e.player) ?: return
 
         if (blackList.any { it == command || it.toString().endsWith("*") && command.startsWith(it.toString().substringBefore("*")) }) {
             if (e.player.isOp || e.player.hasPermission("xacore.bypass") || e.player.hasPermission("xacore.*")) return
