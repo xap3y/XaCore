@@ -53,6 +53,14 @@ messages:
   ping: "<prefix> &fYour ping is &6<ping>ms"
   pingOther: "<prefix> &fPing of player &e<player> &fis &6<ping>ms"
 
+  clearChat: "<prefix> &fChat has been cleared!"
+  chatCleared: "<prefix> &fYou cleared the chat"
+
+  chatLocked: "<prefix> &fChat has been locked"
+  chatUnlocked: "<prefix> &fChat has been unlocked"
+
+  chatDeny: "<prefix> &cChat is currently locked"
+
 menus:
   helpMenu:
     - "&a&m-+-------------------&r&7[&c&lXaCore&7]&a&m-------------------+-"
@@ -66,6 +74,17 @@ menus:
     - "&3Author: &f<author>"
     - "&3Debug: &f<debug>"
     - "&a&m-+-----------------------------------------------+-"
+
+  whois:
+    - "<prefix> &fWhois player &6<player>"
+    - " &7UUID: &f<uuid>"
+    - " &7IP: &e<ip>"
+    - " &7World: &9<world>"
+    - " &7Location (X, Y, Z): &3<location>"
+    - " &7Gamemode: &b<gamemode>"
+    - " &7Health: &c<health>"
+    - " &7Hunger: &6<hunger>"
+    - " &7Speed: &f<speed>"
 
 commands:
   blacklist:

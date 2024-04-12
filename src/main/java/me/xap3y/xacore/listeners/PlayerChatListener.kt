@@ -11,6 +11,14 @@ class PlayerChatListener(private val plugin: Main): Listener {
 
     @EventHandler
     fun onPlayerChatEvent(e: AsyncPlayerChatEvent) {
+
+        val isChatLocked = plugin.chatLocked
+        if (isChatLocked) {
+            if (e.player.hasPermission("xacore.chat.bypass") || e.player.hasPermission("xacore.*") || e.player.isOp) return
+            e.isCancelled = true
+            return plugin.textApi.commandReply(e.player, "messages.chatDeny", wPrefix = true, default = "<prefix> &cChat is locked!")
+        }
+
         val isEnabled = plugin.config.getBoolean("chatFormat")
         if (!isEnabled) return
 
@@ -21,7 +29,10 @@ class PlayerChatListener(private val plugin: Main): Listener {
                 message,
                 hashMapOf(
                     "player" to e.player.displayName,
-                    "message" to e.message
+                    "message" to e.message,
+                    "vault_prefix" to plugin.textApi.getPrefix(e.player),
+                    "vault_suffix" to plugin.textApi.getSuffix(e.player),
+                    "vault_group" to plugin.textApi.getGroup(e.player)
                 ),
                 true
             )

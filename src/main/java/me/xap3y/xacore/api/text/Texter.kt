@@ -6,6 +6,7 @@ import me.xap3y.xacore.Main
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.command.CommandSender
+import org.bukkit.entity.Player
 
 @Suppress("DEPRECATION")
 class Texter(private val plugin: Main) {
@@ -17,7 +18,7 @@ class Texter(private val plugin: Main) {
         ChatColor.translateAlternateColorCodes('&', msg)
 
     fun console(msg: String) =
-        Bukkit.getConsoleSender().sendMessage(coloredMessage(msg))
+        Bukkit.getConsoleSender().sendMessage(coloredMessage(msg.replace("<prefix>", plugin.config.getString("prefix") ?: "&7[&6XaCore&7]")))
 
     fun replace(msg: String, map: HashMap<String, String>, wPrefix: Boolean = false): String {
         var message = msg
@@ -38,4 +39,9 @@ class Texter(private val plugin: Main) {
                 )
             )
         )
+
+    fun getPrefix(p: Player): String = plugin.chat?.getPlayerPrefix(p) ?: ""
+
+    fun getSuffix(p: Player): String = plugin.chat?.getPlayerSuffix(p) ?: ""
+    fun getGroup(p: Player): String = plugin.permission?.getPrimaryGroup(p) ?: ""
 }

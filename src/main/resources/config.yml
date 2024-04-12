@@ -2,6 +2,8 @@
 prefix: "&7[&6XaCore&7]"
 debug: false
 
+hookVault: true
+
 joinMessage: true
 quitMessage: true
 

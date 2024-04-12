@@ -207,6 +207,96 @@ class AdminCommands(private val plugin: Main) {
             wPrefix = true,
             default = "<prefix> &fTeleported to spawn!"
         )
+        
+    }
+
+    @Command("clearchat|cc")
+    @CommandDescription("Clear the chat")
+    @Permission(value = ["xacore.clearchat", "xacore.*"], mode = Permission.Mode.ANY_OF)
+    fun onClearChatCommand(commandSender: CommandSender) {
+
+        plugin.server.onlinePlayers.forEach {
+            for (i in 0..100) {
+                it.sendMessage("    ")
+                it.sendMessage(" ")
+            }
+            if (it != commandSender)
+                plugin.textApi.commandReply(
+                    it,
+                    "messages.clearChat",
+                    wPrefix = true,
+                    default = "<prefix> &fChat cleared!"
+                )
+        }
+
+        plugin.textApi.commandReply(
+            commandSender,
+            "messages.chatCleared",
+            wPrefix = true,
+            default = "<prefix> &fChat cleared!"
+        )
+    }
+
+    @Command("lockchat")
+    @CommandDescription("Lock the chat")
+    @Permission(value = ["xacore.lockchat", "xacore.*"], mode = Permission.Mode.ANY_OF)
+    fun onLockChatCommand(commandSender: CommandSender) {
+        plugin.chatLocked = !plugin.chatLocked
+
+        plugin.server.onlinePlayers.forEach {
+            plugin.textApi.commandReply(
+                it,
+                if (plugin.chatLocked) "messages.chatLocked" else "messages.chatUnlocked",
+                wPrefix = true,
+                default = if (plugin.chatLocked) "<prefix> &fChat locked!" else "<prefix> &fChat unlocked!"
+            )
+        }
+        if (commandSender !is Player)
+            plugin.textApi.commandReply(
+                commandSender,
+                if (plugin.chatLocked) "messages.chatLocked" else "messages.chatUnlocked",
+                wPrefix = true,
+                default = if (plugin.chatLocked) "<prefix> &fChat locked!" else "<prefix> &fChat unlocked!"
+            )
+    }
+
+    @Command("whois <player>")
+    @CommandDescription("Get information about a player")
+    @Permission(value = ["xacore.whois", "xacore.*"], mode = Permission.Mode.ANY_OF)
+    fun onWhoisCommand(
+        commandSender: CommandSender,
+        @Argument("player") player: Player,
+    ) {
+        val location = player.location
+        val world = location.world.name
+        val uuid = player.uniqueId.toString()
+        val isFlying = player.isFlying
+        val ip = player.address.hostString
+
+        val list = plugin.configManager.getList("menus.whois") ?: return // TODO
+
+        list.forEach {
+            commandSender.sendMessage(
+                plugin.textApi.coloredMessage(
+                    plugin.textApi.replace(
+                        it.toString(),
+                        hashMapOf(
+                            "player" to player.name,
+                            "world" to world,
+                            "uuid" to uuid,
+                            "isFlying" to isFlying.toString(),
+                            "ip" to ip,
+                            "location" to "${"%.2f".format(location.x)}, ${"%.2f".format(location.y)}, ${"%.2f".format(location.z)}",
+                            "gamemode" to player.gameMode.name.lowercase(),
+                            "health" to player.health.toString(),
+                            "hunger" to player.foodLevel.toString(),
+                            "speed" to if (player.isFlying) player.flySpeed.toString() else player.walkSpeed.toString(),
+                        ),
+                        true
+                    )
+                )
+            )
+        }
     }
 
 
