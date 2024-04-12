@@ -48,24 +48,27 @@ class AdminCommands(private val plugin: Main) {
                 wPrefix = true
             )
 
-        if (speed < 1 || speed > 10)
+        if (speed < 0 || speed > 20)
             return plugin.textApi.commandReply(
                 commandSender,
                 "messages.speedRange",
                 hashMapOf("speed" to speed.toString()),
                 true,
-                "<prefix> &cSpeed must be between 1 and 10!"
+                "<prefix> &cSpeed must be between 0 and 20!"
             )
 
+        val realSpeed = if (speed == 0) if (commandSender.isFlying) 2/20f else 4/20f else speed/20f
+
         if (commandSender.isFlying)
-            commandSender.flySpeed = speed / 20f
+            commandSender.flySpeed = realSpeed
         else
-            commandSender.walkSpeed = speed / 20f
+            commandSender.walkSpeed = realSpeed
+
 
         plugin.textApi.commandReply(
             commandSender,
             "messages.speedMessage",
-            hashMapOf("speed" to speed.toString()),
+            hashMapOf("speed" to realSpeed.toString()),
             true,
             "<prefix> &fYour speed has been set to &e<speed>&f!"
         )
@@ -165,6 +168,7 @@ class AdminCommands(private val plugin: Main) {
         plugin.config.set("spawn.z", commandSender.location.z)
         plugin.config.set("spawn.yaw", commandSender.location.yaw)
         plugin.config.set("spawn.pitch", commandSender.location.pitch)
+        plugin.config.save(plugin.configFile)
 
         plugin.textApi.commandReply(
             commandSender,

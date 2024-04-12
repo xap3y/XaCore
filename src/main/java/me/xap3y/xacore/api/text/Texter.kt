@@ -6,7 +6,6 @@ import me.xap3y.xacore.Main
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.command.CommandSender
-import org.bukkit.entity.Player
 
 @Suppress("DEPRECATION")
 class Texter(private val plugin: Main) {

@@ -1,6 +1,7 @@
 package me.xap3y.xacore.listeners
 
 import me.xap3y.xacore.Main
+import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
@@ -43,6 +44,23 @@ class PlayerJoinListener(private val plugin: Main): Listener {
 
         // TODO -- Scoreboard and maybe tab-list?
 
+        // Gamemode on join
+        val gamemodeOnJoinToggle = plugin.config.getBoolean("gamemodeOnJoinToggle")
+        if (gamemodeOnJoinToggle) {
+
+            val gamemodeOnJoin = plugin.config.getString("gamemodeOnJoin") ?: "SURVIVAL"
+            // get gamemode from string
+            val gamemode = when (gamemodeOnJoin.uppercase()) {
+                "SURVIVAL" -> org.bukkit.GameMode.SURVIVAL
+                "CREATIVE" -> org.bukkit.GameMode.CREATIVE
+                "ADVENTURE" -> org.bukkit.GameMode.ADVENTURE
+                "SPECTATOR" -> org.bukkit.GameMode.SPECTATOR
+                else -> org.bukkit.GameMode.SURVIVAL
+            }
+            Bukkit.getScheduler().runTask(plugin, Runnable {
+                e.player.gameMode = gamemode
+            })
+        }
 
     }
 

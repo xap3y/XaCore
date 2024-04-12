@@ -10,3 +10,6 @@ chatFormat: true
 spawnOnJoin: true
 
 commandBlackList: true
+
+gamemodeOnJoinToggle: false
+gamemodeOnJoin: "creative"
