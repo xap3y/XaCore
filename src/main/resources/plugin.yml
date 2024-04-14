@@ -4,6 +4,8 @@ main: me.xap3y.xacore.Main
 api-version: '1.20'
 author: xap3y
 
+soft-depend: [PlaceholderAPI, Vault]
+
 permissions:
     xacore.bypass:
         description: Bypass disabled commands

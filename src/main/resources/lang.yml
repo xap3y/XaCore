@@ -1,6 +1,8 @@
 # MSG file
-test: "&8Loaded"
 
+# For vault prefix:
+#  If you are hooking into vault, you can use: <vault_prefix>, <vault_suffix>, <vault_group>
+#  And if you are hooking into PAPI, you can use any placeholders you want! For example, %vault_prefix%
 chatFormat: "&6<player> &7>> &r<message>"
 
 
@@ -39,6 +41,7 @@ messages:
   speedMessage: "<prefix> &fSet speed to &6<speed>"
   speedRange: "<prefix> &cSpeed must be between 0 and 10"
 
+# Homes are not implemented yet! But they will be soon!
   setHome: "<prefix> &fHome set"
   setCustomHome: "<prefix> &fHome &e<home> &fset"
   homeTeleport: "<prefix> &fTeleported to home"
@@ -53,6 +56,25 @@ messages:
   ping: "<prefix> &fYour ping is &6<ping>ms"
   pingOther: "<prefix> &fPing of player &e<player> &fis &6<ping>ms"
 
+  clearChat: "<prefix> &fChat has been cleared!"
+  chatCleared: "<prefix> &fYou cleared the chat"
+
+  chatLocked: "<prefix> &fChat has been locked"
+  chatUnlocked: "<prefix> &fChat has been unlocked"
+
+  chatDeny: "<prefix> &cChat is currently locked"
+
+  whisperSelf: "<prefix> &cYou can't whisper to yourself"
+  whisperNobody: "<prefix> &cnobody to whisper to"
+  whisperOffline: "<prefix> &cPlayer &e<player> &cwent offline"
+  whisperFormatFrom: "&7From &6<player> &7>> &r<message>"
+  whisperFormatTo: "&7To &6<player> &7>> &r<message>"
+
+  cmdSpyFormat: "&7[&cSPY&7] &f<player> &7>> &r<command>"
+  cmdSpyEnable: "<prefix> &fCommandSpy has been &aenabled"
+  cmdSpyDisable: "<prefix> &fCommandSpy has been &cdisabled"
+
+# You can use PAPI placeholders even in those menus below!
 menus:
   helpMenu:
     - "&a&m-+-------------------&r&7[&c&lXaCore&7]&a&m-------------------+-"
@@ -67,6 +89,20 @@ menus:
     - "&3Debug: &f<debug>"
     - "&a&m-+-----------------------------------------------+-"
 
+  whois:
+    - "<prefix> &fWhois player &6<player>"
+    - " &7UUID: &f<uuid>"
+    - " &7IP: &e<ip>"
+    - " &7World: &9<world>"
+    - " &7Location (X, Y, Z): &3<location>"
+    - " &7Gamemode: &b<gamemode>"
+    - " &7Health: &c<health>"
+    - " &7Hunger: &6<hunger>"
+    - " &7Speed: &f<speed>"
+
+# The wildcard * means that the settings will apply to all possible worlds.
+# For example: bukkit:* will disable all bukkit: commands like bukkit:plugins, bukkit:version, etc.
+# The wildcard * can be used not only after :, but everywhere in the command name.
 commands:
   blacklist:
     - "plugin"
