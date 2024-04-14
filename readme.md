@@ -47,7 +47,7 @@ Supports Vault and PlaceholderAPI. <br>
 <details>
     <summary><b>Features</b></summary>
 
-- Supporting PAPI placeholders in all messages (in lang.yml)
+- Supporting PAPI placeholders in all messages (in [lang.yml](https://github.com/xap3y/XaCore/blob/main/src/main/resources/lang.yml))
 - Customizable join/quit messages and chat format
 - Command blacklist
 - Spawn on join, gamemode on join
