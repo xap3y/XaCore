@@ -4,6 +4,7 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion
 import me.xap3y.xacore.Main
 import org.bukkit.OfflinePlayer
 
+// TODO -- PlaceholderAPI
 class PlaceholderAPI(private val plugin: Main): PlaceholderExpansion() {
     override fun getIdentifier(): String = "xacore"
 

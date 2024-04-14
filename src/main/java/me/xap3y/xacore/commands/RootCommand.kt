@@ -16,7 +16,7 @@ class RootCommand(private val plugin: Main) {
     @Permission(value = ["xacore.reload", "xacore.*"], mode = Permission.Mode.ANY_OF)
     fun onReloadCommand(commandSender: CommandSender) {
         plugin.reloadConfig()
-        plugin.configManager.loadLang()
+        plugin.storageManager.loadLang()
 
         plugin.textApi.commandReply(commandSender, "reloadMessage", wPrefix = true, default = "<prefix> &aConfiguration reloaded!")
     }
@@ -32,7 +32,7 @@ class RootCommand(private val plugin: Main) {
     @CommandDescription("Shows the plugin help")
     fun onHelpCommand(commandSender: CommandSender) {
 
-        val menu = plugin.configManager.getList("menus.helpMenu", if (commandSender is Player) commandSender else null) ?:
+        val menu = plugin.storageManager.getList("menus.helpMenu", if (commandSender is Player) commandSender else null) ?:
             return commandSender.sendMessage(plugin.textApi.replace(plugin.textApi.coloredMessage("<prefix> &cNo help message found!"), hashMapOf(), true))
 
 
@@ -46,7 +46,7 @@ class RootCommand(private val plugin: Main) {
     @CommandDescription("Shows the about menu")
     fun onAboutCommand(commandSender: CommandSender) {
 
-        val menu = plugin.configManager.getList("menus.aboutMenu", if (commandSender is Player) commandSender else null) ?:
+        val menu = plugin.storageManager.getList("menus.aboutMenu", if (commandSender is Player) commandSender else null) ?:
             return commandSender.sendMessage(plugin.textApi.replace(plugin.textApi.coloredMessage("<prefix> &cNo help message found!"), hashMapOf(), true))
 
         menu.forEach {

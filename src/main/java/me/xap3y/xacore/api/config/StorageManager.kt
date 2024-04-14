@@ -6,7 +6,7 @@ import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.entity.Player
 
-class ConfigManager(private val plugin: Main) {
+class StorageManager(private val plugin: Main) {
 
     private var langYML: FileConfiguration? = null
 
@@ -15,7 +15,7 @@ class ConfigManager(private val plugin: Main) {
         if (!plugin.configFile.exists()) {
             plugin.saveResource(plugin.configFile.name, false)
         }
-        plugin.reloadConfig()
+        plugin.config.load(plugin.configFile)
     }
 
     fun loadLang() {
@@ -49,6 +49,18 @@ class ConfigManager(private val plugin: Main) {
             list.replaceAll { PlaceholderAPI.setPlaceholders(player, it.toString()) }
 
         return list.map { it.toString().replace("%", "%%") }.toMutableList()
+    }
+
+    fun logInfo(message: String) {
+        if (!plugin.isLogFileInit()) return
+        if (!plugin.config.getBoolean("logToFile", false)) return
+
+        if (!plugin.logFile.exists())
+            plugin.logFile.createNewFile()
+
+        plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
+            plugin.logFile.appendText("$message\n")
+        })
 
     }
 

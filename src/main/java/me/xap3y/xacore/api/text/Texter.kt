@@ -54,7 +54,7 @@ class Texter(private val plugin: Main) {
         commandSender.sendMessage(
             plugin.textApi.coloredMessage(
                 plugin.textApi.replace(
-                    plugin.configManager.getMessage(key, default ?: "<prefix> &cNo message found!"),
+                    plugin.storageManager.getMessage(key, default ?: "<prefix> &cNo message found!"),
                     map ?: hashMapOf(),
                     wPrefix
                 )

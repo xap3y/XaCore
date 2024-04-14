@@ -10,10 +10,10 @@ class PlayerQuitListener(private val plugin: Main): Listener {
 
     @EventHandler
     fun onPlayerQuitEvent(e: PlayerQuitEvent) {
-        val isEnabled = plugin.config.getBoolean("quitMessage")
+        val isEnabled = plugin.config.getBoolean("quitMessage", false)
         if (!isEnabled) return
 
-        val message = plugin.configManager.getMessage("messages.quitMessage", "&6<player> &fleft the game", e.player)
+        val message = plugin.storageManager.getMessage("messages.quitMessage", "&6<player> &fleft the game", e.player)
 
         e.quitMessage = plugin.textApi.coloredMessage(
             plugin.textApi.replace(

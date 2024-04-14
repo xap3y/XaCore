@@ -1,7 +1,6 @@
 package me.xap3y.xacore.utils
 
 import me.xap3y.xacore.Main
-import me.xap3y.xacore.hooks.PlaceholderAPI
 import net.milkbowl.vault.chat.Chat
 import net.milkbowl.vault.permission.Permission
 import org.bukkit.Bukkit
@@ -11,7 +10,7 @@ class HookManager(private val plugin: Main) {
 
     fun hookPAPI(): Boolean {
         if (plugin.server.pluginManager.getPlugin("PlaceholderAPI") !== null) {
-            PlaceholderAPI(plugin).register()
+            //PlaceholderAPI(plugin).register()
             plugin.textApi.console("<prefix> &aHooked into PlaceholderAPI")
             return true
         } else {

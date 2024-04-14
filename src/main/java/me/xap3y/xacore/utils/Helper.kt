@@ -50,18 +50,30 @@ class Helper(private val plugin: Main) {
     }
 
     fun getWhisperFormats(): Pair<String, String> {
-        val formatFrom = plugin.configManager.getMessage(
+        val formatFrom = plugin.storageManager.getMessage(
             "messages.whisperFormatFrom",
             "&7From &6<player> &7>> &r<message>",
             null
         )
 
-        val formatTo = plugin.configManager.getMessage(
+        val formatTo = plugin.storageManager.getMessage(
             "messages.whisperFormatTo",
             "&7To &6<player> &7>> &r<message>",
             null
         )
 
         return Pair(formatFrom, formatTo)
+    }
+
+    fun interruptEventOnFlag(worldName: String, flag: String): Boolean {
+        val cfgWorld = plugin.config.getConfigurationSection("perWorldSettings.$worldName")
+        val cfgWildcard = plugin.config.getConfigurationSection("perWorldSettings.*")
+
+        if (cfgWorld === null && cfgWildcard === null) return false
+
+        val onFlagWorld = cfgWorld?.getBoolean(flag)
+        val flagWildcard = cfgWildcard?.getBoolean(flag)
+
+        return onFlagWorld == true || (onFlagWorld === null && flagWildcard == true)
     }
 }

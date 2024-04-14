@@ -19,10 +19,10 @@ class PlayerChatListener(private val plugin: Main): Listener {
             return plugin.textApi.commandReply(e.player, "messages.chatDeny", wPrefix = true, default = "<prefix> &cChat is locked!")
         }
 
-        val isEnabled = plugin.config.getBoolean("chatFormat")
+        val isEnabled = plugin.config.getBoolean("chatFormat", false)
         if (!isEnabled) return
 
-        val message = plugin.configManager.getMessage("chatFormat", "&6<player> &7>> &r<message>", e.player)
+        val message = plugin.storageManager.getMessage("chatFormat", "&6<player> &7>> &r<message>", e.player)
 
         e.format = plugin.textApi.coloredMessage(
             plugin.textApi.replace(
@@ -37,5 +37,6 @@ class PlayerChatListener(private val plugin: Main): Listener {
                 true
             )
         )
+        plugin.storageManager.logInfo("[CHAT] ${e.player.name} -> ${e.message}")
     }
 }
