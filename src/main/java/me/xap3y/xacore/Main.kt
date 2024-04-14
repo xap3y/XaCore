@@ -47,6 +47,7 @@ class Main : JavaPlugin() {
         configFile = File(dataFolder, "config.yml")
         messageFile = File(dataFolder, "lang.yml")
         logFile = File(dataFolder, "logs.txt")
+        // storageFile = File(datafolder, "storage.yml")
 
         storageManager = StorageManager(this)
         storageManager.loadConfig()
@@ -74,6 +75,7 @@ class Main : JavaPlugin() {
             if (list.contains(k.name.lowercase())) return@forEach
             annotationParser.parse(v)
         }
+        annotationParser.parse(RootCommand(this))
 
         registerListeners()
 
