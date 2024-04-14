@@ -2,6 +2,7 @@ package me.xap3y.xacore.commands
 
 import me.xap3y.xacore.Main
 import org.bukkit.Bukkit
+import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.incendo.cloud.annotations.Argument
 import org.incendo.cloud.annotations.Command
@@ -10,48 +11,7 @@ import org.incendo.cloud.annotations.Permission
 
 class UtilityCommands(private val plugin: Main) {
 
-    @Command("enderchest|ec")
-    @CommandDescription("Opens your enderchest")
-    @Permission(value = ["xacore.enderchest", "xacore.*"], mode = Permission.Mode.ANY_OF)
-    fun onEnderChestCommand(commandSender: org.bukkit.command.CommandSender) {
 
-        if (commandSender !is Player)
-            return plugin.helper.onlyPlayersMessage(commandSender)
-
-        Bukkit.getScheduler().runTask(plugin, Runnable {
-            commandSender.openInventory(commandSender.enderChest)
-        })
-        commandSender.playSound(commandSender.location, org.bukkit.Sound.BLOCK_ENDER_CHEST_OPEN, 1f, 1f)
-    }
-
-    @Command("workbench|craft|wb")
-    @CommandDescription("Opens a workbench")
-    @Permission(value = ["xacore.workbench", "xacore.*"], mode = Permission.Mode.ANY_OF)
-    fun onWorkbenchCommand(commandSender: org.bukkit.command.CommandSender) {
-
-        if (commandSender !is Player)
-            return plugin.helper.onlyPlayersMessage(commandSender)
-
-        Bukkit.getScheduler().runTask(plugin, Runnable {
-            commandSender.openWorkbench(null, true)
-        })
-        commandSender.playSound(commandSender.location, org.bukkit.Sound.BLOCK_WOODEN_BUTTON_CLICK_ON, 1f, 1f)
-    }
-
-    @Command("anvil")
-    @CommandDescription("Opens an anvil")
-    @Permission(value = ["xacore.anvil", "xacore.*"], mode = Permission.Mode.ANY_OF)
-    fun onAnvilCommand(commandSender: org.bukkit.command.CommandSender) {
-
-        if (commandSender !is Player)
-            return plugin.helper.onlyPlayersMessage(commandSender)
-
-
-        Bukkit.getScheduler().runTask(plugin, Runnable {
-            commandSender.openAnvil(null, true)
-        })
-        commandSender.playSound(commandSender.location, org.bukkit.Sound.BLOCK_ANVIL_USE, 1f, 1f)
-    }
 
     @Command("ping [player]")
     @CommandDescription("Check ping")
@@ -83,5 +43,255 @@ class UtilityCommands(private val plugin: Main) {
                 true,
                 "<prefix> &fThe ping of &e<player> &fis &r<ping>ms"
             )
+    }
+
+    @Command("whisper|msg|tell|w <player> <message>")
+    @CommandDescription("Send a private message")
+    fun onWhisperCommand(
+        commandSender: CommandSender,
+        @Argument("player") target: Player,
+        @Argument("message") message: Array<String>
+    ) {
+        if (target == commandSender)
+            return plugin.textApi.commandReply(commandSender, "messages.whisperSelf", wPrefix = true)
+
+        processWhisper(commandSender, target, message.joinToString(" "))
+
+        plugin.whisperPlayers[commandSender] = target
+    }
+
+    @Command("reply|r <message>")
+    @CommandDescription("Reply to a private message")
+    fun onReplyCommand(
+        commandSender: CommandSender,
+        @Argument("message") message: Array<String>
+    ) {
+        val target = plugin.whisperPlayers[commandSender]
+
+        if (target === null)
+            return plugin.textApi.commandReply(commandSender, "messages.whisperNobody", default = "<prefix> &cNobody to reply!", wPrefix = true)
+
+        else if (target is Player && !target.isOnline) {
+            plugin.textApi.commandReply(
+                commandSender,
+                "messages.whisperOffline",
+                hashMapOf("player" to target.name),
+                default = "<prefix> &cNobody to reply!",
+                wPrefix = true)
+
+            plugin.whisperPlayers.remove(commandSender)
+            return
+        }
+
+        processWhisper(commandSender, target, message.joinToString(" "))
+    }
+
+    private fun processWhisper(from: CommandSender, to: CommandSender, content: String) {
+        val formats = plugin.helper.getWhisperFormats()
+
+        val messageToSend = plugin.textApi.coloredMessage(content)
+
+        from.sendMessage(
+            plugin.textApi.coloredMessage(
+                plugin.textApi.replace(
+                    formats.second,
+                    hashMapOf("player" to to.name, "message" to messageToSend),
+                    false
+                )
+            )
+        )
+
+        to.sendMessage(
+            plugin.textApi.coloredMessage(
+                plugin.textApi.replace(
+                    formats.first,
+                    hashMapOf("player" to from.name, "message" to messageToSend),
+                    false
+                )
+            )
+        )
+
+        plugin.whisperPlayers[from] = to
+        plugin.whisperPlayers[to] = from
+
+        plugin.storageManager.logInfo("[PM] ${from.name} -> ${to.name} : $content")
+    }
+
+    @Command("fly")
+    @CommandDescription("Toggle fly mode")
+    @Permission(value = ["xacore.fly", "xacore.*"], mode = Permission.Mode.ANY_OF)
+    fun onFlyCommand(commandSender: CommandSender) {
+        if (commandSender !is Player)
+            return plugin.textApi.commandReply(
+                commandSender,
+                "messages.onlyPlayers",
+                wPrefix = true
+            )
+
+        commandSender.allowFlight = !commandSender.allowFlight
+
+        plugin.textApi.commandReply(
+            commandSender,
+            "messages.flyToggle",
+            hashMapOf("status" to if (commandSender.allowFlight) "&aenabled" else "&cdisabled"),
+            true,
+            "<prefix> &fFly mode &r<status>&f!"
+        )
+    }
+
+    @Command("speed <speed>")
+    @CommandDescription("Change your speed")
+    @Permission(value = ["xacore.speed", "xacore.*"], mode = Permission.Mode.ANY_OF)
+    fun onSpeedCommand(
+        commandSender: CommandSender,
+        @Argument("speed") speed: Int,
+    ) {
+        if (commandSender !is Player)
+            return plugin.textApi.commandReply(
+                commandSender,
+                "messages.onlyPlayers",
+                wPrefix = true
+            )
+
+        if (speed < 0 || speed > 20)
+            return plugin.textApi.commandReply(
+                commandSender,
+                "messages.speedRange",
+                hashMapOf("speed" to speed.toString()),
+                true,
+                "<prefix> &cSpeed must be between 0 and 20!"
+            )
+
+        val realSpeed = if (speed == 0) if (commandSender.isFlying) 2/20f else 4/20f else speed/20f
+
+        if (commandSender.isFlying)
+            commandSender.flySpeed = realSpeed
+        else
+            commandSender.walkSpeed = realSpeed
+
+
+        plugin.textApi.commandReply(
+            commandSender,
+            "messages.speedMessage",
+            hashMapOf("speed" to realSpeed.toString()),
+            true,
+            "<prefix> &fYour speed has been set to &e<speed>&f!"
+        )
+    }
+
+    @Command("heal [player]")
+    @CommandDescription("Heal yourself or another player")
+    @Permission(value = ["xacore.heal", "xacore.*"], mode = Permission.Mode.ANY_OF)
+    fun onHealCommand(
+        commandSender: CommandSender,
+        @Argument("player") player: Player? = null,
+    ) {
+        if (commandSender !is Player && player == null)
+            return plugin.textApi.commandReply(
+                commandSender,
+                "messages.wrongUsage",
+                hashMapOf("usage" to "/xc heal <player>"),
+                true
+            )
+
+        val target = player ?: commandSender as Player
+
+        target.health = target.maxHealth
+        target.foodLevel = 20
+
+        if (player == null || (commandSender is Player && commandSender.uniqueId.toString() == target.uniqueId.toString())) {
+            plugin.textApi.commandReply(
+                commandSender,
+                "messages.healSelf",
+                hashMapOf("player" to target.name),
+                true,
+                "<prefix> &fYou have healed &e<player>&f!"
+            )
+        } else {
+            plugin.textApi.commandReply(
+                commandSender,
+                "messages.healOther",
+                hashMapOf("player" to target.name),
+                true,
+                "<prefix> &fYou have healed &e<player>&f!"
+            )
+        }
+    }
+
+    @Command("feed [player]")
+    @CommandDescription("Feed yourself or another player")
+    @Permission(value = ["xacore.feed", "xacore.*"], mode = Permission.Mode.ANY_OF)
+    fun onFeedCommand(
+        commandSender: CommandSender,
+        @Argument("player") player: Player? = null,
+    ) {
+        if (commandSender !is Player && player == null)
+            return plugin.textApi.commandReply(
+                commandSender,
+                "messages.wrongUsage",
+                hashMapOf("usage" to "/xc feed <player>"),
+                true
+            )
+
+        val target = player ?: commandSender as Player
+
+        target.foodLevel = 20
+
+        if (player == null || (commandSender is Player && commandSender.uniqueId.toString() == target.uniqueId.toString())) {
+            plugin.textApi.commandReply(
+                commandSender,
+                "messages.feedSelf",
+                hashMapOf("player" to target.name),
+                true,
+                "<prefix> &fYou have fed yourself!"
+            )
+        } else {
+            plugin.textApi.commandReply(
+                commandSender,
+                "messages.feedOther",
+                hashMapOf("player" to target.name),
+                true,
+                "<prefix> &fYou have fed &e<player>&f!"
+            )
+        }
+    }
+
+    @Command("whois <player>")
+    @CommandDescription("Get information about a player")
+    @Permission(value = ["xacore.whois", "xacore.*"], mode = Permission.Mode.ANY_OF)
+    fun onWhoisCommand(
+        commandSender: CommandSender,
+        @Argument("player") player: Player,
+    ) {
+        val location = player.location
+        val world = location.world.name
+        val uuid = player.uniqueId.toString()
+        val isFlying = player.isFlying
+        val ip = player.address.hostString
+
+        val list = plugin.storageManager.getList("menus.whois", player) ?: return // TODO
+
+        list.forEach {
+            commandSender.sendMessage(
+                plugin.textApi.coloredMessage(
+                    plugin.textApi.replace(
+                        it.toString(),
+                        hashMapOf(
+                            "player" to player.name,
+                            "world" to world,
+                            "uuid" to uuid,
+                            "isFlying" to isFlying.toString(),
+                            "ip" to ip,
+                            "location" to "${"%.2f".format(location.x)}, ${"%.2f".format(location.y)}, ${"%.2f".format(location.z)}",
+                            "gamemode" to player.gameMode.name.lowercase(),
+                            "health" to player.health.toString(),
+                            "hunger" to player.foodLevel.toString(),
+                            "speed" to if (player.isFlying) player.flySpeed.toString() else player.walkSpeed.toString(),
+                        ),
+                        true
+                    )
+                )
+            )
+        }
     }
 }

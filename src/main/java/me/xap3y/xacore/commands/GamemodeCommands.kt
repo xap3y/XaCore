@@ -12,7 +12,7 @@ import org.incendo.cloud.annotations.Command
 import org.incendo.cloud.annotations.CommandDescription
 import org.incendo.cloud.annotations.Permission
 
-class Gamemodes(private val plugin: Main) {
+class GamemodeCommands(private val plugin: Main) {
 
     @Command("gamemode|gm <gamemode> [player]")
     @CommandDescription("Change the gamemode of a player")

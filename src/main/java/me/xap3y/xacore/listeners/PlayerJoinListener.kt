@@ -1,6 +1,7 @@
 package me.xap3y.xacore.listeners
 
 import me.xap3y.xacore.Main
+import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
@@ -12,9 +13,9 @@ class PlayerJoinListener(private val plugin: Main): Listener {
     fun onPlayerJoinEvent(e: PlayerJoinEvent) {
 
         // Custom join message
-        val joinMessageEnabled = plugin.config.getBoolean("joinMessage")
+        val joinMessageEnabled = plugin.config.getBoolean("joinMessage", false)
         if (joinMessageEnabled) {
-            val message = plugin.configManager.getMessage("messages.joinMessage", "&6<player> &fjoined the game")
+            val message = plugin.storageManager.getMessage("messages.joinMessage", "&6<player> &fjoined the game", e.player)
 
             e.joinMessage = plugin.textApi.coloredMessage(
                 plugin.textApi.replace(
@@ -26,7 +27,7 @@ class PlayerJoinListener(private val plugin: Main): Listener {
         }
 
         // Spawn on player join
-        val spawnOnJoinEnabled = plugin.config.getBoolean("spawnOnJoin")
+        val spawnOnJoinEnabled = plugin.config.getBoolean("spawnOnJoin", false)
 
         if (spawnOnJoinEnabled) {
 
@@ -43,6 +44,23 @@ class PlayerJoinListener(private val plugin: Main): Listener {
 
         // TODO -- Scoreboard and maybe tab-list?
 
+        // Gamemode on join
+        val gamemodeOnJoinToggle = plugin.config.getBoolean("gamemodeOnJoinToggle", false)
+        if (gamemodeOnJoinToggle) {
+
+            val gamemodeOnJoin = plugin.config.getString("gamemodeOnJoin") ?: "SURVIVAL"
+            // get gamemode from string
+            val gamemode = when (gamemodeOnJoin.uppercase()) {
+                "SURVIVAL" -> org.bukkit.GameMode.SURVIVAL
+                "CREATIVE" -> org.bukkit.GameMode.CREATIVE
+                "ADVENTURE" -> org.bukkit.GameMode.ADVENTURE
+                "SPECTATOR" -> org.bukkit.GameMode.SPECTATOR
+                else -> org.bukkit.GameMode.SURVIVAL
+            }
+            Bukkit.getScheduler().runTask(plugin, Runnable {
+                e.player.gameMode = gamemode
+            })
+        }
 
     }
 

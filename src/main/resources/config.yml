@@ -1,12 +1,47 @@
 # prefix
 prefix: "&7[&6XaCore&7]"
 debug: false
+logToFile: true
+
+# Hooks, the vault hook is useless now, because you can use PlaceholderAPI instead
+# For example, you can use %vault_prefix% instead of <vault_prefix> in lang.yml
+# Enable the vault hook only if you are not using PlaceholderAPI and you still want to add player's prefix or suffix in chat format
+hookVault: false
+hookPlaceholderAPI: false
 
 joinMessage: true
 quitMessage: true
 
 chatFormat: true
 
-spawnOnJoin: true
+spawnOnJoin: false
 
-commandBlackList: true
+# Enabled command blacklist, you can configure the command list in lang.yml
+commandBlackList: false
+
+gamemodeOnJoinToggle: false
+gamemodeOnJoin: "creative"
+
+# Items in this list will disable the command category with the same name (MUST BE LOWERCASE)
+commandCategoriesDisabled:
+#    - "gamemode"
+#    - "teleport"
+#    - "inventory"
+#    - "chat"
+#    - "utils"
+#    - "weather"
+
+perWorldSettings:
+    "*":
+        nofall: false # Fall damage is enabled
+        blockBreak: false # Players can break blocks
+        blockPlace: false # Players can place blocks
+        noHunger: false # Hunger will be always full
+    test_world:
+        nofall: true
+
+    # This will apply for world named "world" which is the default world
+    #world:
+    #    nofall: true # No fall damage
+    #    blockBreak: true # Players can't break any blocks
+    #    blockPlace: true # Players can't place any blocks

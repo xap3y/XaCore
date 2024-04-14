@@ -1,13 +1,17 @@
 package me.xap3y.xacore
 
-import me.xap3y.xacore.api.config.ConfigManager
+import me.xap3y.xacore.api.config.StorageManager
+import me.xap3y.xacore.api.enums.CommandCategory
 import me.xap3y.xacore.api.text.Texter
 import me.xap3y.xacore.commands.*
-import me.xap3y.xacore.listeners.PlayerChatListener
-import me.xap3y.xacore.listeners.PlayerCommandPreprocessListener
-import me.xap3y.xacore.listeners.PlayerJoinListener
-import me.xap3y.xacore.listeners.PlayerQuitListener
+import me.xap3y.xacore.listeners.*
+import me.xap3y.xacore.utils.Helper
+import me.xap3y.xacore.utils.HookManager
+import net.milkbowl.vault.chat.Chat
+import net.milkbowl.vault.permission.Permission
+import org.apache.logging.log4j.CloseableThreadContext.Instance
 import org.bukkit.command.CommandSender
+import org.bukkit.entity.Player
 import org.bukkit.event.Listener
 import org.bukkit.plugin.PluginManager
 import org.bukkit.plugin.java.JavaPlugin
@@ -19,12 +23,21 @@ import java.io.File
 
 class Main : JavaPlugin() {
 
-    lateinit var configManager: ConfigManager
+    lateinit var storageManager: StorageManager
     lateinit var configFile: File
     lateinit var messageFile: File
+    lateinit var logFile: File
+    lateinit var vaultPair: Pair<Chat, Permission>
 
-    val textApi: Texter by lazy { Texter(this) }
+    var chatLocked = false
+    var useVault = false
+    var usePapi = false
+
     val helper: Helper by lazy { Helper(this) }
+    val textApi: Texter by lazy { Texter(this) }
+    val whisperPlayers: HashMap<CommandSender, CommandSender> = hashMapOf()
+    val cmdSpyToggles: MutableSet<Player> = mutableSetOf()
+
 
     override fun onEnable() {
 
@@ -33,35 +46,82 @@ class Main : JavaPlugin() {
 
         configFile = File(dataFolder, "config.yml")
         messageFile = File(dataFolder, "lang.yml")
+        logFile = File(dataFolder, "logs.txt")
 
-        configManager = ConfigManager(this)
-        configManager.loadConfig()
-        configManager.loadLang()
+        storageManager = StorageManager(this)
+        storageManager.loadConfig()
+        storageManager.loadLang()
 
+        useVault = config.getBoolean("hookVault")
 
         val commandManager = createCommandManager()
         val annotationParser = createAnnotationParser(commandManager)
 
-        annotationParser.parse(RootCommand(this))
-        annotationParser.parse(Gamemodes(this))
-        annotationParser.parse(WeatherCommands(this))
-        annotationParser.parse(AdminCommands(this))
-        annotationParser.parse(UtilityCommands(this))
 
-        regiserListeners()
+        val commandCategories: HashMap<CommandCategory, Any> =
+            hashMapOf(
+                CommandCategory.GAMEMODE to GamemodeCommands(this),
+                CommandCategory.WEATHER to WeatherCommands(this),
+                CommandCategory.CHAT to ChatCommands(this),
+                CommandCategory.INVENTORY to InventoryCommands(this),
+                CommandCategory.UTILS to UtilityCommands(this),
+                CommandCategory.TELEPORT to TeleportationCommands(this)
+            )
+
+        val list = config.getList("commandCategoriesDisabled") ?: listOf()
+
+        commandCategories.forEach { (k, v) ->
+            if (list.contains(k.name.lowercase())) return@forEach
+            annotationParser.parse(v)
+        }
+
+        registerListeners()
+
+        // Hooks
+        val hookManager = HookManager(this)
+
+        if (useVault) {
+            val pair = hookManager.hookVault()
+
+            if (pair !== null)
+                vaultPair = pair
+            else
+                if (useVault) useVault = false
+        }
+
+        if (config.getBoolean("hookPlaceholderAPI")) {
+            if (hookManager.hookPAPI())
+                usePapi = true
+            else
+                if (usePapi) usePapi = false
+        }
+
+        val time = System.currentTimeMillis()
+        val date = java.util.Date(time)
+        val humanDate = date.toString()
+
+        storageManager.logInfo("Plugin enabled at $humanDate")
 
     }
 
     override fun onDisable() {
-        // Plugin shutdown logic
+        val time = System.currentTimeMillis()
+        val date = java.util.Date(time)
+        val humanDate = date.toString()
+
+        storageManager.logInfo("Plugin disabled at $humanDate")
     }
 
-    private fun regiserListeners() {
+    private fun registerListeners() {
         val list: Set<Listener> = setOf(
             PlayerJoinListener(this),
             PlayerQuitListener(this),
             PlayerChatListener(this),
-            PlayerCommandPreprocessListener(this)
+            PlayerCommandPreprocessListener(this),
+            EntityDamageListener(this),
+            BlockListener(this),
+            ServerCommandListener(this.storageManager),
+            FoodLevelChangeListener(this)
         )
 
         val pm: PluginManager = server.pluginManager
@@ -99,4 +159,6 @@ class Main : JavaPlugin() {
 
     fun isConfigFileInit() = ::configFile.isInitialized
     fun isLangFileInit() = ::messageFile.isInitialized
+    fun isVaultPairInit() = ::vaultPair.isInitialized
+    fun isLogFileInit() = ::logFile.isInitialized
 }
