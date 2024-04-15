@@ -3,6 +3,7 @@ package me.xap3y.xacore.commands
 import me.xap3y.xacore.Main
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import org.incendo.cloud.annotations.Argument
 import org.incendo.cloud.annotations.Command
 import org.incendo.cloud.annotations.CommandDescription
 import org.incendo.cloud.annotations.Permission
@@ -85,5 +86,81 @@ class ChatCommands(private val plugin: Main) {
             wPrefix = true,
             default = "<prefix> &fChat cleared!"
         )
+    }
+
+    @Command("whisper|msg|tell|w <player> <message>")
+    @CommandDescription("Send a private message")
+    fun onWhisperCommand(
+        commandSender: CommandSender,
+        @Argument("player") target: Player,
+        @Argument("message") message: Array<String>
+    ) {
+        if (target == commandSender)
+            return plugin.textApi.commandReply(commandSender, "messages.whisperSelf", wPrefix = true)
+
+        processWhisper(commandSender, target, message.joinToString(" "))
+
+        plugin.whisperPlayers[commandSender] = target
+    }
+
+    @Command("reply|r <message>")
+    @CommandDescription("Reply to a private message")
+    fun onReplyCommand(
+        commandSender: CommandSender,
+        @Argument("message") message: Array<String>
+    ) {
+        val target = plugin.whisperPlayers[commandSender]
+
+        if (target === null)
+            return plugin.textApi.commandReply(commandSender, "messages.whisperNobody", default = "<prefix> &cNobody to reply!", wPrefix = true)
+
+        else if (target is Player && !target.isOnline) {
+            plugin.textApi.commandReply(
+                commandSender,
+                "messages.whisperOffline",
+                hashMapOf("player" to target.name),
+                default = "<prefix> &cNobody to reply!",
+                wPrefix = true)
+
+            plugin.whisperPlayers.remove(commandSender)
+            return
+        }
+
+        processWhisper(commandSender, target, message.joinToString(" "))
+    }
+
+    private fun processWhisper(from: CommandSender, to: CommandSender, content: String) {
+        val formats = plugin.helper.getWhisperFormats()
+
+        plugin.storageManager.logInfo(
+            "[WHISPER] FORMAT1: ${formats.first} FORMAT2: ${formats.second}" +
+            "FROM: $from  |  TO: $to  |  CONTENT: $content", true
+        )
+        val messageToSend = plugin.textApi.coloredMessage(content)
+
+        from.sendMessage(
+            plugin.textApi.coloredMessage(
+                plugin.textApi.replace(
+                    formats.second,
+                    hashMapOf("player" to to.name, "message" to messageToSend),
+                    false
+                )
+            )
+        )
+
+        to.sendMessage(
+            plugin.textApi.coloredMessage(
+                plugin.textApi.replace(
+                    formats.first,
+                    hashMapOf("player" to from.name, "message" to messageToSend),
+                    false
+                )
+            )
+        )
+
+        plugin.whisperPlayers[from] = to
+        plugin.whisperPlayers[to] = from
+
+        plugin.storageManager.logInfo("[PM] ${from.name} -> ${to.name} : $content")
     }
 }

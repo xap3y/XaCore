@@ -2,6 +2,7 @@ package me.xap3y.xacore.listeners
 
 import me.xap3y.xacore.Main
 import org.bukkit.Bukkit
+import org.bukkit.Location
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
@@ -12,8 +13,15 @@ class PlayerJoinListener(private val plugin: Main): Listener {
     @EventHandler
     fun onPlayerJoinEvent(e: PlayerJoinEvent) {
 
-        // Custom join message
         val joinMessageEnabled = plugin.config.getBoolean("joinMessage", false)
+        val spawnOnJoinEnabled = plugin.config.getBoolean("spawnOnJoin", false)
+        val gamemodeOnJoinToggle = plugin.config.getBoolean("gamemodeOnJoinToggle", false)
+
+        plugin.storageManager.logInfo(
+            "[EVENT] PlayerJoinEvent > FIRED - ${e.player.name} GMON: $gamemodeOnJoinToggle  JM: $joinMessageEnabled SON: $spawnOnJoinEnabled",
+            true)
+
+        // Custom join message
         if (joinMessageEnabled) {
             val message = plugin.storageManager.getMessage("messages.joinMessage", "&6<player> &fjoined the game", e.player)
 
@@ -27,11 +35,9 @@ class PlayerJoinListener(private val plugin: Main): Listener {
         }
 
         // Spawn on player join
-        val spawnOnJoinEnabled = plugin.config.getBoolean("spawnOnJoin", false)
-
         if (spawnOnJoinEnabled) {
 
-            val spawnLocation = plugin.helper.getSpawnLocation() ?: return
+            val spawnLocation: Location = plugin.storageManager.getLocationFromStorage("spawn") ?: return
 
             // Sync
             plugin.server.scheduler.runTask(plugin, Runnable {
@@ -45,7 +51,6 @@ class PlayerJoinListener(private val plugin: Main): Listener {
         // TODO -- Scoreboard and maybe tab-list?
 
         // Gamemode on join
-        val gamemodeOnJoinToggle = plugin.config.getBoolean("gamemodeOnJoinToggle", false)
         if (gamemodeOnJoinToggle) {
 
             val gamemodeOnJoin = plugin.config.getString("gamemodeOnJoin") ?: "SURVIVAL"

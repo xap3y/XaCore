@@ -10,6 +10,7 @@ import me.xap3y.xacore.utils.HookManager
 import net.milkbowl.vault.chat.Chat
 import net.milkbowl.vault.permission.Permission
 import org.apache.logging.log4j.CloseableThreadContext.Instance
+import org.bukkit.Location
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.event.Listener
@@ -27,16 +28,20 @@ class Main : JavaPlugin() {
     lateinit var configFile: File
     lateinit var messageFile: File
     lateinit var logFile: File
+    lateinit var logFileDebug: File
+    lateinit var storageFile: File
     lateinit var vaultPair: Pair<Chat, Permission>
 
     var chatLocked = false
     var useVault = false
     var usePapi = false
+    var debugMode = false
 
     val helper: Helper by lazy { Helper(this) }
     val textApi: Texter by lazy { Texter(this) }
     val whisperPlayers: HashMap<CommandSender, CommandSender> = hashMapOf()
     val cmdSpyToggles: MutableSet<Player> = mutableSetOf()
+    val playerHomes: HashMap<String, HashMap<String, Location?>> = hashMapOf()
 
 
     override fun onEnable() {
@@ -47,11 +52,13 @@ class Main : JavaPlugin() {
         configFile = File(dataFolder, "config.yml")
         messageFile = File(dataFolder, "lang.yml")
         logFile = File(dataFolder, "logs.txt")
-        // storageFile = File(datafolder, "storage.yml")
+        logFileDebug = File(dataFolder, "logsDebug.txt")
+        storageFile = File(dataFolder, "storage.yml")
 
         storageManager = StorageManager(this)
         storageManager.loadConfig()
         storageManager.loadLang()
+        storageManager.loadStorage()
 
         useVault = config.getBoolean("hookVault")
 
@@ -163,4 +170,5 @@ class Main : JavaPlugin() {
     fun isLangFileInit() = ::messageFile.isInitialized
     fun isVaultPairInit() = ::vaultPair.isInitialized
     fun isLogFileInit() = ::logFile.isInitialized
+    fun isStorageFileInit() = ::storageFile.isInitialized
 }

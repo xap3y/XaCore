@@ -13,6 +13,10 @@ class PlayerChatListener(private val plugin: Main): Listener {
     fun onPlayerChatEvent(e: AsyncPlayerChatEvent) {
 
         val isChatLocked = plugin.chatLocked
+        plugin.storageManager.logInfo(
+            "[EVENT] AsyncPlayerChatEvent > FIRED - LOCK: $isChatLocked   P: ${e.player.name} : ${e.message}",
+            true)
+
         if (isChatLocked) {
             if (e.player.hasPermission("xacore.chat.bypass") || e.player.hasPermission("xacore.*") || e.player.isOp) return
             e.isCancelled = true

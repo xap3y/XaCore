@@ -15,7 +15,7 @@ class RootCommand(private val plugin: Main) {
     @CommandDescription("Reloads the plugin configuration")
     @Permission(value = ["xacore.reload", "xacore.*"], mode = Permission.Mode.ANY_OF)
     fun onReloadCommand(commandSender: CommandSender) {
-        plugin.reloadConfig()
+        plugin.storageManager.loadConfig()
         plugin.storageManager.loadLang()
 
         plugin.textApi.commandReply(commandSender, "reloadMessage", wPrefix = true, default = "<prefix> &aConfiguration reloaded!")

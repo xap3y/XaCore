@@ -4,12 +4,13 @@
 #  If you are hooking into vault, you can use: <vault_prefix>, <vault_suffix>, <vault_group>
 #  And if you are hooking into PAPI, you can use any placeholders you want! For example, %vault_prefix%
 chatFormat: "&6<player> &7>> &r<message>"
-
+#chatFormat: "%vault_prefix% &r<player> &7>> &r%vault_suffix%<message>"
 
 messages:
 
   wrongUsage: "<prefix> &cWrong usage! &7<usage>"
   noPermission: "<prefix> &cYou don't have permission to do that!"
+  error: "<prefix> &cAn error occurred! Please contact the server administrator!"
 
   onlyPlayers: "<prefix> &cOnly players can use this command!"
 
@@ -48,6 +49,8 @@ messages:
   customHomeTeleport: "<prefix> &fTeleported to home &e<home>"
   noHome: "<prefix> &cYou don't have a home set"
   noCustomHome: "<prefix> &cYou don't have a home named &e<home> &cset"
+  delHome: "<prefix> &fHome deleted"
+  delCustomHome: "<prefix> &fHome &e<home> &fwas deleted"
 
   setSpawn: "<prefix> &fSpawn set"
   noSpawn: "<prefix> &cSpawn not set"

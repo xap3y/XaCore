@@ -11,6 +11,10 @@ class PlayerCommandPreprocessListener(private val plugin: Main): Listener {
     fun onPlayerCommandProcess(e: PlayerCommandPreprocessEvent) {
         val command = e.message.split(" ")[0].substring(1)
 
+        plugin.storageManager.logInfo(
+            "[EVENT] PlayerCommandPreprocessEvent > FIRED - ${e.player.name} : ${e.message}",
+            true)
+
         if (plugin.cmdSpyToggles.isNotEmpty()) {
             val message = plugin.textApi.coloredMessage(plugin.textApi.replace(
                 plugin.storageManager.getMessage("messages.cmdSpyFormat", ""),
