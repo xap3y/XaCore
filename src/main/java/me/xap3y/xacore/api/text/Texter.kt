@@ -46,6 +46,10 @@ class Texter(private val plugin: Main) {
             }
         }
 
+        plugin.storageManager.logInfo(
+            "[TEXTAPI-REPLACER] ORIG: $original  REG: $regex  RES: $result", true
+        )
+
         if (wPrefix) result = result.replace("<prefix>", plugin.config.getString("prefix") ?: "&7[&6XaCore&7]")
         return result
     }
