@@ -10,8 +10,13 @@ class FoodLevelChangeListener(private val plugin: Main): Listener {
 
     @EventHandler
     fun onHungerChange(e: FoodLevelChangeEvent) {
+
         val player = e.entity as Player
         val interrupt = plugin.helper.interruptEventOnFlag(player.world.name, "noHunger")
+
+        plugin.storageManager.logInfo(
+            "[EVENT] FoodLevelChangeEvent > FIRED - ${e.entity.name} INTERRUPT: $interrupt  FL: ${e.foodLevel}",
+            true)
 
         if (interrupt){
             if (e.foodLevel < 20) e.foodLevel = 20

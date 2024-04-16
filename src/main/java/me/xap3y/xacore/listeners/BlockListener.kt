@@ -12,6 +12,9 @@ class BlockListener(private val plugin: Main): Listener {
     fun onBlockPlace(e: BlockPlaceEvent) {
 
         val interrupt = plugin.helper.interruptEventOnFlag(e.block.world.name, "blockPlace")
+        plugin.storageManager.logInfo(
+            "[EVENT] BlockPlaceEvent > ${e.player.name} -- INTERRUPT $interrupt",
+            true)
 
         if (interrupt) e.isCancelled = true
     }
@@ -20,6 +23,9 @@ class BlockListener(private val plugin: Main): Listener {
     fun onBlockBreak(e: BlockBreakEvent) {
 
         val interrupt = plugin.helper.interruptEventOnFlag(e.block.world.name, "blockBreak")
+        plugin.storageManager.logInfo(
+            "[EVENT] BlockBreakEvent > ${e.player.name} -- INTERRUPT $interrupt",
+            true)
 
         if (interrupt) e.isCancelled = true
     }
